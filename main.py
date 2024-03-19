@@ -1,87 +1,12 @@
 # Charles Chrietzberg 011042509
 
-
-import csv
 import datetime
 import math
+import csv
 
-# HashTable class using chaining.
-# Class for building the Hash table that will hold all of the packages
-class ChainingHashTable:
-    # Constructor with optional initial capacity parameter.
-    # Assigns all buckets with an empty list.
-    def __init__(self, initial_capacity=40):
-        # initialize the hash table with empty bucket list entries.
-        self.table = []
-        for i in range(initial_capacity):
-            self.table.append([])
-
-    # Inserts a new item into the hash table.
-    def insert(self, key, item):  # does both insert and update
-        # get the bucket list where this item will go.
-        bucket = hash(key) % len(self.table)
-        bucket_list = self.table[bucket]
-
-        # update key if it is already in the bucket
-        for kv in bucket_list:
-            # print (key_value)
-            if kv[0] == key:
-                kv[1] = item
-                return True
-
-        # if not, insert the item to the end of the bucket list.
-        key_value = [key, item]
-        bucket_list.append(key_value)
-        return True
-
-    # Searches for an item with matching key in the hash table.
-    # Returns the item if found, or None if not found.
-    def search(self, key):
-        # get the bucket list where this key would be.
-        bucket = hash(key) % len(self.table)
-        bucket_list = self.table[bucket]
-        # print(bucket_list)
-
-        # search for the key in the bucket list
-        for kv in bucket_list:
-            # print (key_value)
-            if kv[0] == key:
-                return kv[1]  # value
-        return None
-
-    # Removes an item with matching key from the hash table.
-    def remove(self, key):
-        # get the bucket list where this item will be removed from.
-        bucket = hash(key) % len(self.table)
-        bucket_list = self.table[bucket]
-
-        # remove the item from the bucket list if it is present.
-        for kv in bucket_list:
-            # print (key_value)
-            if kv[0] == key:
-                bucket_list.remove([kv[0], kv[1]])
-
-# Package class to hold the data for the packages that will be put into the hash table
-class Package:
-    def __init__(self, ID, address, city, state, zipCode, deliveryDeadline, weight, status):
-        self.ID = ID
-        self.address = address
-        self.city = city
-        self.state = state
-        self.zipCode = zipCode
-        self.deliveryDeadline = deliveryDeadline
-        self.weight = weight
-        self.status = status
-
-    def __str__(self):  # overwite print(Movie) otherwise it will print object reference
-        return "%s, %s, %s, %s, %s, %s, %s, %s" % (self.ID,
-                                                   self.address,
-                                                   self.city,
-                                                   self.state,
-                                                   self.zipCode,
-                                                   self.deliveryDeadline,
-                                                   self.weight,
-                                                   self.status)
+from hashTable import ChainingHashTable
+from PackageClass import Package
+from Truck1 import TruckOneDelivery
 
 # Function to get the package data from the csv file and inset them into the hash table
 def loadPackageData(fileName):
@@ -104,8 +29,6 @@ def loadPackageData(fileName):
 
             # insert it into the hash table
             myHash.insert(pID, p)
-
-
 # function to get the Data from the DistanceTable.csv and load it into a 2D list
 def loadDistanceData(fileName):
     with open(fileName) as distanceData:
@@ -121,7 +44,6 @@ def loadDistanceData(fileName):
                     counter2 = counter2 + 1
             counter2 = 0
             counter1 = counter1 + 1
-
 
 myHash = ChainingHashTable() # Create a new instance of the hash table class
 
@@ -213,7 +135,7 @@ for i in truck2:  # O(n)
         status = "en route " + str(startTime)
         package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
         myHash.insert(i.ID, package)
-
+'''
 # Loop to match the addresses from truck1 and the addresses list and put them into addressIndexTruck1
 for i in truck1:  # O(n^2)
     for j in address:
@@ -222,7 +144,7 @@ for i in truck1:  # O(n^2)
             break
         countInd = countInd + 1
     countInd = 0
-
+'''
 for j in range(len(address)):  # O(n)
         if address[j] == "5383 S 900 East #104":
             address[j] = "5383 South 900 East #104"
@@ -237,16 +159,20 @@ for i in truck2:  # O(n^2)
     countInd = 0
 
 placeHolder = list()
-
+'''
 nextAddressIndex = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck1
 nextIndexForDistances = 0 # Holds the value at that index position in addressIndexTruck1
 distancesAddressIndexTruck1 = list() # List to determine which address on the truck is the next closest address
+'''
 nextAddressIndex2 = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck2
 nextIndexForDistances2 = 0 # Holds the value at that index position in addressIndexTruck2
 distancesAddressIndexTruck2 = list() # List to determine which address on the truck (2) is the next closest address
 # Start at hub and deliver package 15 first to meet 9 AM deadline for truck1
 backToHub = 0
 moving = 0
+
+first = TruckOneDelivery(truck1,address,distancesList,truckSpeed,myHash,totalMiles,currentTimeTruck1,0)
+'''
 # while loop is O(n^3)
 while addressIndexTruck1:# While loop to iterate through truck 1 and deliver the packages to the next closest address
     if moving == 0: # If first iteration of the while loop get the closest address to the HUB
@@ -332,6 +258,7 @@ minutes = math.floor(distBackToHub / truckSpeed)
 seconds = round(((distBackToHub / truckSpeed) - (
     math.floor((distBackToHub / truckSpeed)))) * 60)
 currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
+'''
 finishedTruck1 = currentTimeTruck1
 moving = 0
 # While loop for truck2 O(n^3)

@@ -9,6 +9,7 @@ from PackageClass import Package
 from Truck1 import delivery
 from Truck2 import delivery2
 from Truck3 import delivery3
+from UserInterface import interface
 
 # Function to get the package data from the csv file and inset them into the hash table
 def loadPackageData(fileName):
@@ -137,42 +138,11 @@ for i in truck2:  # O(n)
         status = "en route " + str(startTime)
         package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
         myHash.insert(i.ID, package)
-'''
-# Loop to match the addresses from truck1 and the addresses list and put them into addressIndexTruck1
-for i in truck1:  # O(n^2)
-    for j in address:
-        if i.address == j:
-            addressIndexTruck1.append(countInd)
-            break
-        countInd = countInd + 1
-    countInd = 0
-'''
+
 for j in range(len(address)):  # O(n)
         if address[j] == "5383 S 900 East #104":
             address[j] = "5383 South 900 East #104"
-'''
-countInd = 0
-for i in truck2:  # O(n^2)
-    for j in address:
-        if i.address == j:
-            addressIndexTruck2.append(countInd)
-            break
-        countInd = countInd + 1
-    countInd = 0
-'''
-placeHolder = list()
-'''
-nextAddressIndex = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck1
-nextIndexForDistances = 0 # Holds the value at that index position in addressIndexTruck1
-distancesAddressIndexTruck1 = list() # List to determine which address on the truck is the next closest address
 
-nextAddressIndex2 = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck2
-nextIndexForDistances2 = 0 # Holds the value at that index position in addressIndexTruck2
-distancesAddressIndexTruck2 = list() # List to determine which address on the truck (2) is the next closest address
-# Start at hub and deliver package 15 first to meet 9 AM deadline for truck1
-backToHub = 0
-moving = 0
-'''
 
 result = delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
 check1 = result[0]
@@ -185,167 +155,9 @@ check3 = result2[0]
 check4 = result2[1]
 print(check3, "   ", check4)
 totalMiles = result2[0]
-'''
-# while loop is O(n^3)
-while addressIndexTruck1:# While loop to iterate through truck 1 and deliver the packages to the next closest address
-    if moving == 0: # If first iteration of the while loop get the closest address to the HUB
-        for i in addressIndexTruck1: # Loop through a list of index positions from address
-            for j in range(len(distancesList[moving])): # Use the index to get the row in distancesList
-                # Since addressList and DistancesList are both ordered the index from addressList
-                # will match up to the distance in that row of distancesList
-                if j == i: # Check if j and i math index values
-                    # If they match put the distance into distancesAddressIndexTruck1
-                    distancesAddressIndexTruck1.append(distancesList[moving][j])
-                    break
-        for i in truck1:
-            if i.ID != 15:
-                continue
-            for j in range(len(addressIndexTruck1)):
-                if i.address == address[addressIndexTruck1[j]]:
-                    placeHolder.append(j)
 
-        # force the delivery of package number 15 to meet the 9 AM deadline
-        milesTraveled = distancesAddressIndexTruck1[placeHolder[0]] # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled # variable for total miles traveled
-        nextAddressIndex = distancesAddressIndexTruck1.index(milesTraveled) # get index of minimum
-        nextIndexForDistances = addressIndexTruck1[nextAddressIndex] # Use that index to get the value for the next distance list
-
-        # Calculate minutes and seconds taken by truck1 to get to next address
-        minutes = math.floor(milesTraveled/truckSpeed)
-        seconds = round(((milesTraveled/truckSpeed) - (math.floor((milesTraveled/truckSpeed)))) * 60)
-        currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        placeHolderValue = addressIndexTruck1[placeHolder[0]]
-        while milesTraveled in distancesAddressIndexTruck1: # remove values for already delivered packages from truck1
-            for i in truck1:
-                if i.address == address[placeHolderValue]:
-                    status = "Delivered " + str(currentTimeTruck1)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck1.remove(i)
-                    break
-            distancesAddressIndexTruck1.remove(milesTraveled)
-            addressIndexTruck1.remove(nextIndexForDistances)
-
-        distancesAddressIndexTruck1.clear()
-        placeHolder.clear()
-
-    else:
-        for i in addressIndexTruck1:
-            for j in range(len(distancesList[nextIndexForDistances])):
-                if j == i:
-                    distancesAddressIndexTruck1.append(distancesList[nextIndexForDistances][j])
-                    break
-
-        milesTraveled = min(distancesAddressIndexTruck1) # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled # Variable for total miles traveled
-        nextAddressIndex = distancesAddressIndexTruck1.index(min(distancesAddressIndexTruck1)) # get index of minimum
-        nextIndexForDistances = addressIndexTruck1[nextAddressIndex] # Use that index to get the value for the next distance list
-
-        if len(addressIndexTruck1) == 1:
-            backToHub = nextIndexForDistances
-
-        # Calculate minutes and seconds taken by truck1 to get to next address
-        minutes = math.floor(min(distancesAddressIndexTruck1)/truckSpeed)
-        seconds = round(((min(distancesAddressIndexTruck1)/truckSpeed) - (math.floor((min(distancesAddressIndexTruck1)/truckSpeed)))) * 60)
-        currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        holder = addressIndexTruck1[nextAddressIndex]
-        while nextIndexForDistances in addressIndexTruck1: # remove values for already delivered packages
-            for i in truck1:
-                if i.address == address[nextIndexForDistances]:
-                    status = "Delivered " + str(currentTimeTruck1)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck1.remove(i)
-                    break
-            addressIndexTruck1.remove(nextIndexForDistances)
-        distancesAddressIndexTruck1.clear()
-    moving = moving + 1
-
-# Use while loop to find next closest address and update and remove package delivered from truck1
-distBackToHub = distancesList[0][backToHub] # Get the distance from the last address back to the hub
-totalMiles = totalMiles + distBackToHub # Add the distance to totalMiles
-# Calculate the time to travel that distance and add it to the current time
-minutes = math.floor(distBackToHub / truckSpeed)
-seconds = round(((distBackToHub / truckSpeed) - (
-    math.floor((distBackToHub / truckSpeed)))) * 60)
-currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
-'''
 finishedTruck1 = currentTimeTruck1
-'''
-moving = 0
-# While loop for truck2 O(n^3)
-while addressIndexTruck2:  # While loop to iterate through truck 2 and deliver the packages to the next closest address
-    if moving == 0:  # If first iteration of the while loop get the closest address to the HUB
-        # Truck2 for loop
-        for i in addressIndexTruck2:  # Loop through a list of index positions from address
-            for j in range(len(distancesList[moving])):  # Use the index to get the row in distancesList
-                # Since addressList and DistancesList are both ordered the index from addressList
-                # will match up to the distance in that row of distancesList
-                if j == i:  # Check if j and i math index values
-                    # If they match put the distance into distancesAddressIndexTruck2
-                    distancesAddressIndexTruck2.append(distancesList[moving][j])
-                    break
 
-        # Truck2 set variables
-        milesTraveled2 = min(
-            distancesAddressIndexTruck2)  # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled2  # variable for total miles traveled
-        nextAddressIndex2 = distancesAddressIndexTruck2.index(milesTraveled2)  # get index of minimum
-        nextIndexForDistances2 = addressIndexTruck2[
-            nextAddressIndex2]  # Use that index to get the value for the next distance list
-
-        # Calculate minutes and seconds taken by truck2 to get to next address
-        minutes = math.floor(milesTraveled2 / truckSpeed)
-        seconds = round(((milesTraveled2 / truckSpeed) - (math.floor((milesTraveled2 / truckSpeed)))) * 60)
-        currentTimeTruck2 = currentTimeTruck2 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        while nextIndexForDistances2 in addressIndexTruck2:  # remove values for already delivered packages from truck2
-            for i in truck2:
-                if i.address == address[nextIndexForDistances2]:
-                    status = "Delivered " + str(currentTimeTruck2)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck2.remove(i)
-                    break
-            addressIndexTruck2.remove(nextIndexForDistances2)
-
-        distancesAddressIndexTruck2.clear()
-
-    else:
-        for i in addressIndexTruck2:
-            for j in range(len(distancesList[nextIndexForDistances2])):
-                if j == i:
-                    distancesAddressIndexTruck2.append(distancesList[nextIndexForDistances2][j])
-                    break
-
-        # set variables for truck2
-        milesTraveled2 = min(
-            distancesAddressIndexTruck2)  # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled2  # Variable for total miles traveled
-        nextAddressIndex2 = distancesAddressIndexTruck2.index(min(distancesAddressIndexTruck2))  # get index of minimum
-        nextIndexForDistances2 = addressIndexTruck2[
-            nextAddressIndex2]  # Use that index to get the value for the next distance list
-
-        # Calculate minutes and seconds taken by truck2 to get to next address
-        minutes = math.floor(min(distancesAddressIndexTruck2) / truckSpeed)
-        seconds = round(((min(distancesAddressIndexTruck2) / truckSpeed) - (
-            math.floor((min(distancesAddressIndexTruck2) / truckSpeed)))) * 60)
-        currentTimeTruck2 = currentTimeTruck2 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        while nextIndexForDistances2 in addressIndexTruck2:  # remove values for already delivered packages from truck2
-            for i in truck2:
-                if i.address == address[nextIndexForDistances2]:
-                    status = "Delivered " + str(currentTimeTruck2)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck2.remove(i)
-                    break
-            addressIndexTruck2.remove(nextIndexForDistances2)
-        distancesAddressIndexTruck2.clear()
-    moving = moving + 1
-'''
 truck3 = list() # Create list for packages on truck 3
 truck3.append(myHash.search(6))
 truck3.append(myHash.search(9))
@@ -371,16 +183,7 @@ truck3[4] = (myHash.search(32))
 truck3[5] = (myHash.search(33))
 truck3[6] = (myHash.search(35))
 truck3[7] = (myHash.search(39))
-'''
-countInd = 0
-for i in truck3:  # O(n^2)
-    for j in address:
-        if i.address == j:
-            addressIndexTruck3.append(countInd)
-            break
-        countInd = countInd + 1
-    countInd = 0
-'''
+
 for i in truck3:  # O(n)
     status = "en route " + str(currentTimeTruck1)
     pack = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
@@ -389,12 +192,7 @@ for i in truck3:  # O(n)
 checkTruck3 = list()
 for i in truck3:  # O(n)
     checkTruck3.append(i)
-'''
-nextAddressIndex3 = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck3
-nextIndexForDistances3 = 0 # Holds the value at that index position in addressIndexTruck3
-distancesAddressIndexTruck3 = list() # List to determine which address on the truck is the next closest address
-milesTraveled3 = 0
-'''
+
 correctAddressTime = datetime.time(10, 20, 0)  # Time for correct address
 combinedCorrectAddressTime = datetime.datetime.combine(currentDay,
                                                   correctAddressTime)  # datetime object for correct address
@@ -404,126 +202,8 @@ check5 = result3[0]
 check6 = result3[1]
 print(check5, "   ", check6)
 totalMiles = result3[0]
-'''
-moving = 0
-# While loop is O(n^3)
-while  addressIndexTruck3:# While loop to iterate through truck3 and deliver the packages to the next closest address
-    if moving == 0: # If first iteration of the while loop, get the closest address to the HUB
-        for i in addressIndexTruck3: # Loop through a list of index positions from address
-            for j in range(len(distancesList[moving])): # Use the index to get the row in distancesList
-                # Since addressList and DistancesList are both ordered the index from addressList
-                # will match up to the distance in that row of distancesList
-                if j == i: # Check if j and i math index values
-                    # If they match put the distance into distancesAddressIndexTruck3
-                    distancesAddressIndexTruck3.append(distancesList[moving][j])
-                    break
-        for i in truck3: # Start with package 25 to 10:30 delivery deadline
-            if i.ID != 25:
-                continue
-            for j in range(len(addressIndexTruck3)):
-                if i.address == address[addressIndexTruck3[j]]:
-                    placeHolder.append(j)
 
-        # force the delivery of package number 25 to meet the 10:30 AM deadline
-        milesTraveled3 = distancesAddressIndexTruck3[placeHolder[0]] # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled3 # variable for total miles traveled
-        nextAddressIndex3 = distancesAddressIndexTruck3.index(milesTraveled3) # get index of minimum
-        nextIndexForDistances3 = addressIndexTruck3[nextAddressIndex3] # Use that index to get the value for the next distance list
-
-        # Calculate minutes and seconds taken by truck3 to get to next address
-        minutes = math.floor(milesTraveled3/truckSpeed)
-        seconds = round(((milesTraveled3/truckSpeed) - (math.floor((milesTraveled3/truckSpeed)))) * 60)
-        currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        placeHolderValue = addressIndexTruck3[placeHolder[0]]
-        while milesTraveled3 in distancesAddressIndexTruck3: # remove values for already delivered packages from truck3
-            for i in truck3:
-                if i.address == address[placeHolderValue]:
-                    status = "Delivered " + str(currentTimeTruck1)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck3.remove(i)
-                    break
-            distancesAddressIndexTruck3.remove(milesTraveled3)
-            addressIndexTruck3.remove(nextIndexForDistances3)
-
-        distancesAddressIndexTruck3.clear()
-        placeHolder.clear()
-
-    elif moving == 1:
-        for i in addressIndexTruck3: # Loop through a list of index positions from address
-            for j in range(len(distancesList[nextIndexForDistances3])): # Use the index to get the row in distancesList
-                # Since addressList and DistancesList are both ordered the index from addressList
-                # will match up to the distance in that row of distancesList
-                if j == i: # Check if j and i math index values
-                    # If they match put the distance into distancesAddressIndexTruck1
-                    distancesAddressIndexTruck3.append(distancesList[nextIndexForDistances3][j])
-                    break
-        for i in truck3: # force next delivery to address 6 to meet 10:30 AM delivery deadline
-            if i.ID != 6:
-                continue
-            for j in range(len(addressIndexTruck3)):
-                if i.address == address[addressIndexTruck3[j]]:
-                    placeHolder.append(j)
-
-        # force the delivery of package number 6 to meet the 10:30 AM deadline
-        milesTraveled3 = distancesAddressIndexTruck3[placeHolder[0]] # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled3 # variable for total miles traveled
-        nextAddressIndex3 = distancesAddressIndexTruck3.index(milesTraveled3) # get index of minimum
-        nextIndexForDistances3 = addressIndexTruck3[nextAddressIndex3] # Use that index to get the value for the next distance list
-
-        # Calculate minutes and seconds taken by truck1 to get to next address
-        minutes = math.floor(milesTraveled3/truckSpeed)
-        seconds = round(((milesTraveled3/truckSpeed) - (math.floor((milesTraveled3/truckSpeed)))) * 60)
-        currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        placeHolderValue = addressIndexTruck3[placeHolder[0]]
-        while milesTraveled3 in distancesAddressIndexTruck3: # remove values for already delivered packages from truck3
-            for i in truck3:
-                if i.address == address[placeHolderValue]:
-                    status = "Delivered " + str(currentTimeTruck1)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck3.remove(i)
-                    break
-            distancesAddressIndexTruck3.remove(milesTraveled3)
-            addressIndexTruck3.remove(nextIndexForDistances3)
-
-        distancesAddressIndexTruck3.clear()
-        placeHolder.clear()
-
-    else:
-        for i in addressIndexTruck3:
-            for j in range(len(distancesList[nextIndexForDistances3])):
-                if j == i:
-                    distancesAddressIndexTruck3.append(distancesList[nextIndexForDistances3][j])
-                    break
-
-        milesTraveled3 = min(distancesAddressIndexTruck3) # Add the distance traveled to the next address to milesTraveled
-        totalMiles = totalMiles + milesTraveled3 # Variable for total miles traveled
-        nextAddressIndex3 = distancesAddressIndexTruck3.index(min(distancesAddressIndexTruck3)) # get index of minimum
-        nextIndexForDistances3 = addressIndexTruck3[nextAddressIndex3] # Use that index to get the value for the next distance list
-
-        if len(addressIndexTruck3) == 1:
-            backToHub = nextIndexForDistances3
-
-        # Calculate minutes and seconds taken by truck1 to get to next address
-        minutes = math.floor(min(distancesAddressIndexTruck3)/truckSpeed)
-        seconds = round(((min(distancesAddressIndexTruck3)/truckSpeed) - (math.floor((min(distancesAddressIndexTruck3)/truckSpeed)))) * 60)
-        currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
-
-        holder = addressIndexTruck3[nextAddressIndex3]
-        while nextIndexForDistances3 in addressIndexTruck3: # remove values for already delivered packages
-            for i in truck3:
-                if i.address == address[nextIndexForDistances3]:
-                    status = "Delivered " + str(currentTimeTruck1)
-                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
-                    myHash.insert(i.ID, package)
-                    truck3.remove(i)
-                    break
-            addressIndexTruck3.remove(nextIndexForDistances3)
-        distancesAddressIndexTruck3.clear()
-    moving = moving + 1
+interface(totalMiles, myHash, finishedTruck1, combinedCorrectAddressTime, checkTruck3)
 '''
 # Create Console interface for user
 exitProgram = 0
@@ -696,3 +376,4 @@ while exitProgram == 0:  # O(n^3)
             test = 1
     if userInput4 == "Y":
         exitProgram = 1
+'''

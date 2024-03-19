@@ -6,7 +6,9 @@ import csv
 
 from hashTable import ChainingHashTable
 from PackageClass import Package
-from Truck1 import TruckOneDelivery
+from Truck1 import delivery
+from Truck2 import delivery2
+from Truck3 import delivery3
 
 # Function to get the package data from the csv file and inset them into the hash table
 def loadPackageData(fileName):
@@ -148,7 +150,7 @@ for i in truck1:  # O(n^2)
 for j in range(len(address)):  # O(n)
         if address[j] == "5383 S 900 East #104":
             address[j] = "5383 South 900 East #104"
-
+'''
 countInd = 0
 for i in truck2:  # O(n^2)
     for j in address:
@@ -157,21 +159,32 @@ for i in truck2:  # O(n^2)
             break
         countInd = countInd + 1
     countInd = 0
-
+'''
 placeHolder = list()
 '''
 nextAddressIndex = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck1
 nextIndexForDistances = 0 # Holds the value at that index position in addressIndexTruck1
 distancesAddressIndexTruck1 = list() # List to determine which address on the truck is the next closest address
-'''
+
 nextAddressIndex2 = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck2
 nextIndexForDistances2 = 0 # Holds the value at that index position in addressIndexTruck2
 distancesAddressIndexTruck2 = list() # List to determine which address on the truck (2) is the next closest address
 # Start at hub and deliver package 15 first to meet 9 AM deadline for truck1
 backToHub = 0
 moving = 0
+'''
 
-first = TruckOneDelivery(truck1,address,distancesList,truckSpeed,myHash,totalMiles,currentTimeTruck1,0)
+result = delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
+check1 = result[0]
+check2 = result[1]
+print(check1, "   ", check2)
+totalMiles = result[0]
+currentTimeTruck1 = result[1]
+result2 = delivery2(address, truck2, distancesList, truckSpeed, currentTimeTruck2, totalMiles, myHash)
+check3 = result2[0]
+check4 = result2[1]
+print(check3, "   ", check4)
+totalMiles = result2[0]
 '''
 # while loop is O(n^3)
 while addressIndexTruck1:# While loop to iterate through truck 1 and deliver the packages to the next closest address
@@ -260,6 +273,7 @@ seconds = round(((distBackToHub / truckSpeed) - (
 currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
 '''
 finishedTruck1 = currentTimeTruck1
+'''
 moving = 0
 # While loop for truck2 O(n^3)
 while addressIndexTruck2:  # While loop to iterate through truck 2 and deliver the packages to the next closest address
@@ -331,7 +345,7 @@ while addressIndexTruck2:  # While loop to iterate through truck 2 and deliver t
             addressIndexTruck2.remove(nextIndexForDistances2)
         distancesAddressIndexTruck2.clear()
     moving = moving + 1
-
+'''
 truck3 = list() # Create list for packages on truck 3
 truck3.append(myHash.search(6))
 truck3.append(myHash.search(9))
@@ -357,7 +371,7 @@ truck3[4] = (myHash.search(32))
 truck3[5] = (myHash.search(33))
 truck3[6] = (myHash.search(35))
 truck3[7] = (myHash.search(39))
-
+'''
 countInd = 0
 for i in truck3:  # O(n^2)
     for j in address:
@@ -366,7 +380,7 @@ for i in truck3:  # O(n^2)
             break
         countInd = countInd + 1
     countInd = 0
-
+'''
 for i in truck3:  # O(n)
     status = "en route " + str(currentTimeTruck1)
     pack = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
@@ -375,15 +389,22 @@ for i in truck3:  # O(n)
 checkTruck3 = list()
 for i in truck3:  # O(n)
     checkTruck3.append(i)
-
+'''
 nextAddressIndex3 = 0 # Holds to index for the minimum distance in distancesAddressIndexTruck3
 nextIndexForDistances3 = 0 # Holds the value at that index position in addressIndexTruck3
 distancesAddressIndexTruck3 = list() # List to determine which address on the truck is the next closest address
 milesTraveled3 = 0
-
+'''
 correctAddressTime = datetime.time(10, 20, 0)  # Time for correct address
 combinedCorrectAddressTime = datetime.datetime.combine(currentDay,
-                                                     correctAddressTime)  # datetime object for correct address
+                                                  correctAddressTime)  # datetime object for correct address
+
+result3 = delivery3(address, truck3, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
+check5 = result3[0]
+check6 = result3[1]
+print(check5, "   ", check6)
+totalMiles = result3[0]
+'''
 moving = 0
 # While loop is O(n^3)
 while  addressIndexTruck3:# While loop to iterate through truck3 and deliver the packages to the next closest address
@@ -503,7 +524,7 @@ while  addressIndexTruck3:# While loop to iterate through truck3 and deliver the
             addressIndexTruck3.remove(nextIndexForDistances3)
         distancesAddressIndexTruck3.clear()
     moving = moving + 1
-
+'''
 # Create Console interface for user
 exitProgram = 0
 test = 0

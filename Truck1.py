@@ -47,30 +47,6 @@ def delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, tota
             nextIndexForDistances = addressIndexTruck1[
                 nextAddressIndex]  # Use that index to get the value for the next distance list
 
-            # Calculate minutes and seconds taken by truck1 to get to next address
-            minutes = math.floor(milesTraveled / truckSpeed)
-            seconds = round(
-                ((milesTraveled / truckSpeed) - (math.floor((milesTraveled / truckSpeed)))) * 60)
-            currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes,
-                                                                                 seconds=seconds)
-
-            placeHolderValue = addressIndexTruck1[placeHolder[0]]
-            while milesTraveled in distancesAddressIndexTruck1:  # remove values for already delivered packages from truck1
-                for i in truck1:
-                    if i.address == address[placeHolderValue]:
-                        status = "Delivered " + str(currentTimeTruck1)
-                        package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline,
-                                          i.weight,
-                                          status)
-                        myHash.insert(i.ID, package)
-                        truck1.remove(i)
-                        break
-                distancesAddressIndexTruck1.remove(milesTraveled)
-                addressIndexTruck1.remove(nextIndexForDistances)
-
-            distancesAddressIndexTruck1.clear()
-            placeHolder.clear()
-
         else:
             for i in addressIndexTruck1:
                 for j in range(len(distancesList[nextIndexForDistances])):
@@ -86,33 +62,28 @@ def delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, tota
             nextIndexForDistances = addressIndexTruck1[
                 nextAddressIndex]  # Use that index to get the value for the next distance list
 
-            if len(addressIndexTruck1) == 1:
-                backToHub = nextIndexForDistances
+        if len(addressIndexTruck1) == 1:
+            backToHub = nextIndexForDistances
 
-            # Calculate minutes and seconds taken by truck1 to get to next address
-            minutes = math.floor(min(distancesAddressIndexTruck1) / truckSpeed)
-            seconds = round(((min(distancesAddressIndexTruck1) / truckSpeed) - (
-                math.floor((min(distancesAddressIndexTruck1) / truckSpeed)))) * 60)
-            currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes,
+        # Calculate minutes and seconds taken by truck1 to get to next address
+        minutes = math.floor(min(distancesAddressIndexTruck1) / truckSpeed)
+        seconds = round(((min(distancesAddressIndexTruck1) / truckSpeed) - (
+            math.floor((min(distancesAddressIndexTruck1) / truckSpeed)))) * 60)
+        currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes,
                                                                                  seconds=seconds)
-
-            holder = addressIndexTruck1[nextAddressIndex]
-            while nextIndexForDistances in addressIndexTruck1:  # remove values for already delivered packages
-                for i in truck1:
-                    if i.address == address[nextIndexForDistances]:
-                        status = "Delivered " + str(currentTimeTruck1)
-                        package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline,
-                                          i.weight,
-                                          status)
-                        myHash.insert(i.ID, package)
-                        truck1.remove(i)
-                        break
-                addressIndexTruck1.remove(nextIndexForDistances)
-            distancesAddressIndexTruck1.clear()
+        while nextIndexForDistances in addressIndexTruck1:  # remove values for already delivered packages
+            for i in truck1:
+                if i.address == address[nextIndexForDistances]:
+                    status = "Delivered " + str(currentTimeTruck1)
+                    package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline,
+                                      i.weight,
+                                      status)
+                    myHash.insert(i.ID, package)
+                    truck1.remove(i)
+                    break
+            addressIndexTruck1.remove(nextIndexForDistances)
+        distancesAddressIndexTruck1.clear()
         moving = moving + 1
-
-
-
 
     distBackToHub = distancesList[0][backToHub] # Get the distance from the last address back to the hub
     totalMiles = totalMiles + distBackToHub  # Add the distance to totalMiles
@@ -125,5 +96,3 @@ def delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, tota
     returnValues.append(totalMiles)
     returnValues.append(currentTimeTruck1)
     return returnValues
-
-

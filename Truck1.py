@@ -40,12 +40,9 @@ def delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, tota
                         placeHolder.append(j)
 
             # force the delivery of package number 15 to meet the 9 AM deadline
-            milesTraveled = distancesAddressIndexTruck1[
-                placeHolder[0]]  # Add the distance traveled to the next address to milesTraveled
+            milesTraveled = distancesAddressIndexTruck1[placeHolder[0]]  # Add the distance traveled to the next address to milesTraveled
             totalMiles = totalMiles + milesTraveled  # variable for total miles traveled
-            nextAddressIndex = distancesAddressIndexTruck1.index(milesTraveled)  # get index of minimum
-            nextIndexForDistances = addressIndexTruck1[
-                nextAddressIndex]  # Use that index to get the value for the next distance list
+            nextIndexForDistances = addressIndexTruck1[distancesAddressIndexTruck1.index(milesTraveled)]  # Use that index to get the value for the next distance list
 
         else:
             for i in addressIndexTruck1:
@@ -54,13 +51,9 @@ def delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, tota
                         distancesAddressIndexTruck1.append(distancesList[nextIndexForDistances][j])
                         break
 
-            milesTraveled = min(
-                distancesAddressIndexTruck1)  # Add the distance traveled to the next address to milesTraveled
+            milesTraveled = min(distancesAddressIndexTruck1)  # Add the distance traveled to the next address to milesTraveled
             totalMiles = totalMiles + milesTraveled  # Variable for total miles traveled
-            nextAddressIndex = distancesAddressIndexTruck1.index(
-                min(distancesAddressIndexTruck1))  # get index of minimum
-            nextIndexForDistances = addressIndexTruck1[
-                nextAddressIndex]  # Use that index to get the value for the next distance list
+            nextIndexForDistances = addressIndexTruck1[distancesAddressIndexTruck1.index(milesTraveled)]  # Use that index to get the value for the next distance list
 
         if len(addressIndexTruck1) == 1:
             backToHub = nextIndexForDistances

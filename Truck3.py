@@ -82,7 +82,7 @@ def delivery3(address, truck3, distancesList, truckSpeed, currentTimeTruck1, tot
                     status = "Delivered " + str(currentTimeTruck1)
                     package = Package(i.ID, i.address, i.city, i.state, i.zipCode, i.deliveryDeadline, i.weight, status)
                     myHash.insert(i.ID, package)
-                    print(i.ID, "   ", i.address, "   ", address[nextIndexForDistances3])
+                    #print(i.ID, "   ", i.address, "   ", address[nextIndexForDistances3])
                     truck3.remove(i)
                     break
             addressIndexTruck3.remove(nextIndexForDistances3)

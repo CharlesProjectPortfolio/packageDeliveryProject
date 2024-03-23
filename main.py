@@ -147,10 +147,25 @@ for j in range(len(address)):  # O(n)
 result = delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
 check1 = result[0]
 check2 = result[1]
-print(check1, "   ", check2)
+check23 = result[2]
+
 totalMiles = result[0]
 currentTimeTruck1 = result[1]
-result2 = delivery2(address, truck2, distancesList, truckSpeed, currentTimeTruck2, totalMiles, myHash)
+
+totalMiles = totalMiles + result[2]  # Add the distance to totalMiles
+# Calculate the time to travel that distance and add it to the current time
+minutes = math.floor(result[2] / truckSpeed)
+seconds = round(((result[2] / truckSpeed) - (
+    math.floor((result[2] / truckSpeed)))) * 60)
+currentTimeTruck1 = currentTimeTruck1 + datetime.timedelta(minutes=minutes, seconds=seconds)
+
+print(check1, "   ", check2, "   ", check23)
+
+
+
+
+
+result2 = delivery(address, truck2, distancesList, truckSpeed, currentTimeTruck2, totalMiles, myHash)
 check3 = result2[0]
 check4 = result2[1]
 print(check3, "   ", check4)
@@ -197,7 +212,7 @@ correctAddressTime = datetime.time(10, 20, 0)  # Time for correct address
 combinedCorrectAddressTime = datetime.datetime.combine(currentDay,
                                                   correctAddressTime)  # datetime object for correct address
 
-result3 = delivery3(address, truck3, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
+result3 = delivery(address, truck3, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
 check5 = result3[0]
 check6 = result3[1]
 print(check5, "   ", check6)

@@ -7,8 +7,6 @@ import csv
 from hashTable import ChainingHashTable
 from PackageClass import Package
 from Truck1 import delivery
-from Truck2 import delivery2
-from Truck3 import delivery3
 from UserInterface import interface
 
 # Function to get the package data from the csv file and inset them into the hash table
@@ -122,11 +120,7 @@ starting = datetime.datetime.combine(currentDay, startTime) # Create datetime ob
 currentTimeTruck1 = starting # Create currentTime for truck1
 currentTimeTruck2 = starting # create current time for truck2
 truckSpeed = 18 / 60 # Calculate truck speed
-milesTraveled = 0 # create variable for miles traveled truck1
-milesTraveled2 = 0 # create variable for miles traveled truck2
 totalMiles = 0 # Keep track of total miles traveled
-addressIndexTruck1 = list() # List of indexes from the address list to be used in the distances table lookup truck1
-addressIndexTruck2 = list() # List of indexes from the address list to be used in the distances table lookup truck2
 countInd = 0
 # loop to assign the packages loaded for delivery with "en route" and a start time
 for i in truck1:  # O(n)
@@ -142,21 +136,17 @@ for i in truck2:  # O(n)
 for j in range(len(address)):  # O(n)
         if address[j] == "5383 S 900 East #104":
             address[j] = "5383 South 900 East #104"
-
-
+# Call truck delivery function
 result = delivery(address, truck1, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
-check1 = result[0]
-check2 = result[1]
-print(check1, "   ", check2)
-totalMiles = result[0]
-currentTimeTruck1 = result[1]
-result2 = delivery2(address, truck2, distancesList, truckSpeed, currentTimeTruck2, totalMiles, myHash)
-check3 = result2[0]
-check4 = result2[1]
-print(check3, "   ", check4)
-totalMiles = result2[0]
-
+# Calculate the time and distance to travel back to the hub
+totalMiles = result[0] + result[2]
+minutes = math.floor(result[2] / truckSpeed)
+seconds = round(((result[2] / truckSpeed) - (math.floor((result[2] / truckSpeed)))) * 60)
+currentTimeTruck1 = result[1] + datetime.timedelta(minutes=minutes, seconds=seconds)
 finishedTruck1 = currentTimeTruck1
+
+result2 = delivery(address, truck2, distancesList, truckSpeed, currentTimeTruck2, totalMiles, myHash)
+totalMiles = result2[0]
 
 truck3 = list() # Create list for packages on truck 3
 truck3.append(myHash.search(6))
@@ -168,21 +158,11 @@ truck3.append(myHash.search(33))
 truck3.append(myHash.search(35))
 truck3.append(myHash.search(39))
 
-addressIndexTruck3 = list()
-
 for i in truck3:  # O(n)
     if i.ID == 9:
         pack = Package(i.ID, '410 S State St', i.city, i.state, '84111', i.deliveryDeadline, i.weight, i.status)
         myHash.insert(i.ID, pack)
-
-truck3[0] = (myHash.search(6))
-truck3[1] = (myHash.search(9))
-truck3[2] = (myHash.search(25))
-truck3[3] = (myHash.search(28))
-truck3[4] = (myHash.search(32))
-truck3[5] = (myHash.search(33))
-truck3[6] = (myHash.search(35))
-truck3[7] = (myHash.search(39))
+        i.address = '410 S State St'
 
 for i in truck3:  # O(n)
     status = "en route " + str(currentTimeTruck1)
@@ -194,13 +174,9 @@ for i in truck3:  # O(n)
     checkTruck3.append(i)
 
 correctAddressTime = datetime.time(10, 20, 0)  # Time for correct address
-combinedCorrectAddressTime = datetime.datetime.combine(currentDay,
-                                                  correctAddressTime)  # datetime object for correct address
-
-result3 = delivery3(address, truck3, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
-check5 = result3[0]
-check6 = result3[1]
-print(check5, "   ", check6)
+combinedCorrectAddressTime = datetime.datetime.combine(currentDay, correctAddressTime)  # datetime object for correct address
+# Call truck delivery function
+result3 = delivery(address, truck3, distancesList, truckSpeed, currentTimeTruck1, totalMiles, myHash)
 totalMiles = result3[0]
 
 interface(totalMiles, myHash, finishedTruck1, combinedCorrectAddressTime, checkTruck3)

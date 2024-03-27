@@ -1,5 +1,6 @@
 import math
 import datetime
+import re
 
 def interface(totalMiles, myHash, finishedTruck1, combinedCorrectAddressTime, checkTruck3):
     # Create Console interface for user
@@ -40,6 +41,17 @@ def interface(totalMiles, myHash, finishedTruck1, combinedCorrectAddressTime, ch
             print(temp)
             statusHolder = datetime.datetime.strptime(temp[10:len(temp)], '%Y-%m-%d %H:%M:%S')
             timeInput = input("Enter the time (HH:MM:SS): ")
+
+            pattern = re.compile(r"[0-9][0-9]:[0-9][0-9]:[0-9][0-9]")
+            if re.fullmatch(pattern, timeInput):
+                continue
+            else:
+                inputValid = 0
+                while inputValid == 0:
+                    timeInput = input("Enter the time (HH:MM:SS): ")
+                    if re.fullmatch(pattern, timeInput):
+                        inputValid = 1
+
             putTogether = str(datetime.date.today()) + " " + timeInput
             convertDateTime = datetime.datetime.strptime(putTogether, '%Y-%m-%d %H:%M:%S')
             check = 0
@@ -105,6 +117,17 @@ def interface(totalMiles, myHash, finishedTruck1, combinedCorrectAddressTime, ch
                 test = 1
         if userInput3 == "Y":
             timeInput = input("Enter the time (HH:MM:SS): ")
+
+            pattern = re.compile(r"[0-9][0-9]:[0-9][0-9]:[0-9][0-9]")
+            if re.fullmatch(pattern, timeInput):
+                continue
+            else:
+                inputValid = 0
+                while inputValid == 0:
+                    timeInput = input("Enter the time (HH:MM:SS): ")
+                    if re.fullmatch(pattern, timeInput):
+                        inputValid = 1
+
             putTogether = str(datetime.date.today()) + " " + timeInput
             convertDateTime = datetime.datetime.strptime(putTogether, '%Y-%m-%d %H:%M:%S')
             for i in range(len(myHash.table)):
